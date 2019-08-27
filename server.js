@@ -87,8 +87,13 @@ app.patch('/editProduct/:id', function(req, res){
 })
 
 
-
-
+// DELETE request for /products/5d645575286eec0a1faa8d04
+app.delete('/products/:id', function(req, res){
+    const id = req.params.id;
+    Product.deleteOne({ _id: id }, function (err) {
+        res.send('deleted');
+    });
+});
 
 
 
