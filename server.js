@@ -4,12 +4,15 @@ const port = 3000;
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const mongoose = require('mongoose');
+const bcrypt = require('bcryptjs');
 
 // Require the config file
 const config = require('./config.json');
 
 // Get the Model for our Product
 const Product = require('./models/products');
+// Get the Model for our Users
+const User = require('./models/users');
 
 // Connect to Mongoose
 mongoose.connect(`mongodb+srv://${config.MONGO_USER}:${config.MONGO_PASSWORD}@cluster0-zd20o.mongodb.net/shop?retryWrites=true&w=majority`, {useNewUrlParser: true});
@@ -87,6 +90,29 @@ app.delete('/product/:id', function(req, res){
         res.send('deleted');
     });
 });
+
+
+app.post('/users', function(req, res){
+    const hash = bcrypt.hashSync(req.body.password);
+    const user = new User({
+        _id: new mongoose.Types.ObjectId(),
+        username: req.body.username,
+        email: req.body.email,
+        password: hash
+    });
+
+    user.save().then(result => {
+        res.send(result);
+    }).catch(err => res.send(err));
+})
+
+app.post('/getUser', function(req, res){
+    // if(bcrypt.compareSync('password', hash)){
+    //     console.log('password matches');
+    // } else {
+    //     console.log('password does not match');
+    // }
+})
 
 // Listen to the port number
 app.listen(port, () => {
